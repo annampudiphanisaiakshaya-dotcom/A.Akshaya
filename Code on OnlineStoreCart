@@ -1,0 +1,55 @@
+import java.util.Scanner;
+public class OnlineStoreCart {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // CO3: Arrays
+        System.out.print("Enter number of products: ");
+        int n = sc.nextInt();
+        String[] productName = new String[n];
+        double[] price = new double[n];
+        int[] quantity = new int[n];
+        double[] amount = new double[n];
+        double total = 0;
+        // CO2: Iteration using for loop
+        for (int i = 0; i < n; i++) {
+            System.out.println("\nProduct " + (i + 1));
+            System.out.print("Enter product name: ");
+            productName[i] = sc.next();
+            System.out.print("Enter price: ");
+            price[i] = sc.nextDouble();
+            System.out.print("Enter quantity: ");
+            quantity[i] = sc.nextInt();
+            // CO1: Basic operation
+            amount[i] = price[i] * quantity[i];
+            total = total + amount[i];
+        } 
+        for (int i = 0; i < n; i++) {
+            System.out.println(
+                productName[i]
+                + " | Price: Rs." + price[i]
+                + " | Quantity: " + quantity[i]
+                + " | Amount: Rs." + amount[i]
+            );
+        }
+        // CO1: Basic operations
+        double discount = total * 10 / 100;
+        double finalAmount = total - discount;       
+        System.out.println("Total Amount: ₹" + total);
+        System.out.println("Discount (10%): ₹" + discount);
+        System.out.println("Final Amount: ₹" + finalAmount);
+        System.out.println("Order placed successfully!");
+        sc.close();
+    }
+}
+OUTPUT:
+Enter number of products: 1
+Product 1
+Enter product name: shoes
+Enter price: 13,000
+Enter quantity: 3
+shoes | Price: Rs.13000.0 | Quantity: 3 | Amount: Rs.39000.0
+Total Amount: ?39000.0
+Discount (10%): ?3900.0
+Final Amount: ?35100.0
+Order placed successfully!
+}
