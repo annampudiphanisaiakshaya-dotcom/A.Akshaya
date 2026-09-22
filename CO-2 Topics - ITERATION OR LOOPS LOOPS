@@ -1,0 +1,40 @@
+INPUT:
+Import java.util.Scanner;
+public class OnlineStoreCart {
+    public static void main(String[ ] args) {
+   Scanner sc = new Scanner(System.in);
+      System.out.print("Enter number of products: ");
+     int n = sc.nextInt( );
+   double total = 0;
+  for (int i = 1; i <= n; i++) {
+ System.out.println("\nProduct " + i);
+System.out.print("Enter product price: ");
+double price = sc.nextDouble();
+System.out.print("Enter quantity: ");
+  int quantity = sc.nextInt();
+ double amount = price * quantity;
+total = total + amount;
+      }
+     System.out.println("\n===== ONLINE STORE =====");
+  System.out.println("Total Cart Amount: Rs." + total);
+   sc.close();
+   }
+}
+Output:
+Enter number of products: 3
+Product 1
+Enter product price: 500
+Enter quantity: 2
+Product 2
+Enter product price: 200
+Enter quantity: 3
+Product 3
+Enter product price: 1000
+Enter quantity: 1
+===== ONLINE STORE =====
+Total Cart Amount: Rs.2600.0
+Product 1 → 500 × 2 = Rs.1000
+Product 2 → 200 × 3 = Rs.600
+Product 3 → 1000 × 1 = Rs.1000
+Total = 1000 + 600 + 1000
+      = Rs.2600
