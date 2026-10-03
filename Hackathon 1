@@ -1,0 +1,36 @@
+import java.util.Scanner;
+public class HouseHoldWastage {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); 
+        // 1a) Data Types 
+        int familyMembers = 4;
+        double waterConsumed = 350.75;
+        int houseNumber = 102;
+        char usageStatus = 'A';
+        System.out.println("Number of family members: " + familyMembers);
+        System.out.println("Water consumed in litres: " + waterConsumed);
+        System.out.println("House number: " + houseNumber);
+        System.out.println("Water usage status: " + usageStatus);
+        // 1b) If-Else Condition
+        System.out.print("Enter the water consumption in litres: ");
+        double consumption = scanner.nextDouble();
+        int bill;
+        if (consumption <= 500) {
+            bill = 100;
+        } else {
+            bill = 200;
+        }
+        System.out.println("The water bill is: Rs." + bill);
+        // 1c) Methods  
+        System.out.print("Enter morning water usage: ");
+        int morning = scanner.nextInt();
+        System.out.print("Enter evening water usage: ");
+        int evening = scanner.nextInt();
+        int total = calculateTotal(morning, evening);
+        System.out.println("Total water consumption: " + total + " litres");
+        scanner.close();
+    }
+    public static int calculateTotal(int morningusage, int eveningusage) {
+        return morningusage + eveningusage;
+    }
+}
