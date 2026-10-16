@@ -1,0 +1,229 @@
+import java.util.*;
+
+class Product {
+    private String productId;
+    private String name;
+    private String category;
+    private double price;
+    private int stock;
+
+    public Product(String productId, String name, String category,
+                   double price, int stock) {
+        this.productId = productId;
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.stock = stock;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void reduceStock(int quantity) {
+        stock -= quantity;
+    }
+}
+
+class Customer {
+    private String id;
+    private String name;
+
+    public Customer(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+public class ECommercePipeline {
+
+    private List<Product> catalog = new ArrayList<Product>();
+    private Map<Product, Integer> cart =
+            new LinkedHashMap<Product, Integer>();
+    private String currentStatus = "Cart";
+
+    public void loadCatalogFromRawCsv(String rawCsvData) {
+        String[] rows = rawCsvData.split("\\r?\\n");
+
+        for (String row : rows) {
+            String[] tokens = row.split(",");
+
+            if (tokens.length != 5) {
+                System.out.println("Invalid CSV row: " + row);
+                continue;
+            }
+
+            try {
+                String id = tokens[0].trim();
+                String name = tokens[1].trim();
+                String category = tokens[2].trim();
+                double price = Double.parseDouble(tokens[3].trim());
+                int stock = Integer.parseInt(tokens[4].trim());
+
+                if (price < 0 || stock < 0) {
+                    System.out.println("Invalid product data: " + row);
+                    continue;
+                }
+
+                catalog.add(new Product(id, name, category, price, stock));
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid product data: " + row);
+            }
+        }
+
+        System.out.println("Inventory loaded successfully.");
+    }
+
+    public Product findProductById(String id) {
+        for (int i = 0; i < catalog.size(); i++) {
+            Product product = catalog.get(i);
+
+            if (product.getProductId().equalsIgnoreCase(id)) {
+                return product;
+            }
+        }
+
+        return null;
+    }
+
+    public void addToCart(Product product, int quantity) {
+        if (product == null || quantity <= 0) {
+            System.out.println("Error: Invalid product or quantity.");
+            return;
+        }
+
+        int existingQuantity = cart.getOrDefault(product, 0);
+
+        if (existingQuantity + quantity > product.getStock()) {
+            System.out.println("Error: Insufficient stock.");
+            return;
+        }
+
+        cart.put(product, existingQuantity + quantity);
+
+        System.out.println("Added to Cart: "
+                + product.getName() + " x" + quantity);
+    }
+
+    public double calculatePipelineTax(double baseAmount) {
+        return baseAmount * 0.18;
+    }
+
+    public double processCheckout(Customer customer) {
+        if (cart.isEmpty()) {
+            System.out.println("Cart is empty. Checkout cancelled.");
+            return 0.0;
+        }
+
+        System.out.println("\n--- E-COMMERCE CHECKOUT ---");
+
+        double baseCartTotal = 0.0;
+
+        for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
+            baseCartTotal += entry.getKey().getPrice()
+                    * entry.getValue();
+        }
+
+        double tax = calculatePipelineTax(baseCartTotal);
+        double total = baseCartTotal + tax;
+
+        for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
+            entry.getKey().reduceStock(entry.getValue());
+        }
+
+        currentStatus = "Order Placed";
+
+        StringBuilder invoice = new StringBuilder();
+
+        invoice.append("\n========================================\n");
+        invoice.append("INVOICE FOR: ")
+                .append(customer.getName()).append("\n");
+        invoice.append("Order Status: ")
+                .append(currentStatus).append("\n");
+        invoice.append("Base Cost: Rs. ")
+                .append(baseCartTotal).append("\n");
+        invoice.append("Estimated Tax (18%): Rs. ")
+                .append(tax).append("\n");
+        invoice.append("Total Payable: Rs. ")
+                .append(total).append("\n");
+        invoice.append("========================================");
+
+        System.out.println(invoice.toString());
+
+        cart.clear();
+
+        return total;
+    }
+
+    public void evaluateBatchRiskMetrics(double[] historicalBillsBatch) {
+        System.out.println("\n--- BATCH TRANSACTION RISK ANALYSIS ---");
+
+        for (int index = 0;
+             index < historicalBillsBatch.length;
+             index++) {
+
+            double bill = historicalBillsBatch[index];
+
+            System.out.print("Batch Index [" + index
+                    + "] Amount: Rs. " + bill);
+
+            if (bill > 100000.00) {
+                System.out.println(" -> High-Value Transaction Risk Alert");
+            } else {
+                System.out.println(" -> Normal Transaction");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+        ECommercePipeline systemEngine = new ECommercePipeline();
+
+        String bulkStockCsvLog =
+                "P101,Flagship Phone 15,Mobile,85000.00,10\n"
+                + "P102,UltraWide Monitor 4K,Display,120000.00,5\n"
+                + "P103,Wireless Mechanical ANC,Audio,15000.00,20";
+
+        systemEngine.loadCatalogFromRawCsv(bulkStockCsvLog);
+
+        Customer activeUser =
+                new Customer("C001", "A. Phani Sai Akshaya");
+
+        Product p1 = systemEngine.findProductById("P101");
+        Product p2 = systemEngine.findProductById("P102");
+
+        systemEngine.addToCart(p1, 1);
+        systemEngine.addToCart(p2, 1);
+
+        double checkoutBill =
+                systemEngine.processCheckout(activeUser);
+
+        double[] transactionalReportsBatch = {
+            checkoutBill, 45000.00, 165000.80
+        };
+
+        systemEngine.evaluateBatchRiskMetrics(
+                transactionalReportsBatch);
+    }
+}
